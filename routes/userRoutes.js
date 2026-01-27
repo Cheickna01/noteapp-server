@@ -117,57 +117,58 @@ userRouter.post("/update-account", auth, async (req, res) => {
 userRouter.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   try {
-    const findUser = await User.findOne({ email: email });
-    if (findUser) {
-      const authToken = jwt.sign(
-        { _id: findUser._id, email: email },
-        process.env.PASSWORD_SECRET_TOKEN,
-        { expiresIn: "1h" }
-      );
-      findUser.authTokens[0] = { authToken };
-      findUser.save();
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.USER,
-          pass: process.env.PASSWORD,
-        },
-      });
-      const sendEmail = async (email, link) => {
-        const mailOptions = {
-          from: `"Support" ${process.env.USER}`,
-          to: email,
-          subject: "Lien de récupération de compte",
-          html: `
-              <p>Bonjour,</p>
-              <p>Vous avez demandé à réinitialiser votre mot de passe.
-              Cliquez sur le lien ci-dessous pour créer un nouveau mot de passe :
-              </p>
-              <a href="${link}">Réinitialiser mon mot de passe</a>
-              <p>Ce lien est valable pendant 48 heures. Si vous n’êtes pas à l’origine de cette demande, ignorez simplement cet email.</p>
-              <p>Merci,</p>
-              <p>L'équipe NOTEAPP</p>
-            `,
-        };
+    const findUser = await User.findOne({ email });
+    if (!findUser) return res.status(409).json("Cet utilisateur n'existe pas!");
 
-        try {
-          await transporter.sendMail(mailOptions);
-          console.log("Email de réinitialisation envoyé avec succès !");
-        } catch (error) {
-          console.log("Erreur lors de l'envoi de l'email :", error);
-        }
-      };
-      const link = `https://notesometips.netlify.app/reset-password/${authToken}`;
-      sendEmail(email, link);
-      res.status(200).json("E-mail envoyé avec succès!");
-    } else {
-      res.status(409).json("Cet utilisateur n'existe pas!");
-    }
+    // Création du token
+    const authToken = jwt.sign(
+      { _id: findUser._id, email },
+      process.env.PASSWORD_SECRET_TOKEN,
+      { expiresIn: "1h" }
+    );
+
+    findUser.authTokens[0] = { authToken };
+    await findUser.save();
+
+    // Création du lien
+    const link = `https://notesometips.netlify.app/reset-password/${authToken}`;
+
+    // Configuration Nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.USER,       // ton Gmail
+        pass: process.env.PASSWORD,   // App Password
+      },
+    });
+
+    // Envoi de l’email
+    const mailOptions = {
+      from: `"Support" <${process.env.USER}>`,
+      to: email,
+      subject: "Lien de récupération de compte",
+      html: `
+        <p>Bonjour,</p>
+        <p>Vous avez demandé à réinitialiser votre mot de passe.
+        Cliquez sur le lien ci-dessous pour créer un nouveau mot de passe :</p>
+        <a href="${link}">Réinitialiser mon mot de passe</a>
+        <p>Ce lien est valable pendant 48 heures. Si vous n’êtes pas à l’origine de cette demande, ignorez simplement cet email.</p>
+        <p>Merci,</p>
+        <p>L'équipe NOTEAPP</p>
+      `,
+    };
+
+    // ATTENDRE que l'email soit envoyé
+    await transporter.sendMail(mailOptions);
+    console.log("Email de réinitialisation envoyé avec succès !");
+
+    res.status(200).json("E-mail envoyé avec succès!");
   } catch (error) {
-    console.log(error);
+    console.log("Erreur forgot-password :", error);
     res.status(500).json("Une erreur est survenue!");
   }
 });
+
 
 // Authentification
 userRouter.post("/auth/:token", async (req, res) => {
