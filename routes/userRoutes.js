@@ -85,12 +85,12 @@ userRouter.post("/logout", auth, async (req, res) => {
 // Modification de compte
 userRouter.post("/update-account", auth, async (req, res) => {
   const { password, newPassword, passwordConfirm } = req.body;
-  const user = await User.findOne({
-    _id: new mongoose.Types.ObjectId(req.user._id),
-  });
+  const user = await User.findById(req.user._id)
   try {
     const isSame = bcrypt.compare(password, user.password);
-    if (isSame === true) {
+    if (!isSame) {
+            res.status(401).json(isSame);
+    } else {
       const hashedPassword = bcrypt.hash(
         newPassword,
         10,
@@ -104,8 +104,6 @@ userRouter.post("/update-account", auth, async (req, res) => {
           }
         }
       );
-    } else {
-      res.status(401).json(isSame);
     }
   } catch (error) {
     res.status(500).json("Une erreur est survenue!");
