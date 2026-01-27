@@ -86,6 +86,7 @@ userRouter.post("/logout", auth, async (req, res) => {
 userRouter.post("/update-account", auth, async (req, res) => {
   const { password, newPassword, passwordConfirm } = req.body;
   const user = await User.findById(req.user._id);
+  if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
   try {
     const isSame = bcrypt.compare(password, user.password);
     if (!isSame) {
