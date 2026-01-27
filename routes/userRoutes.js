@@ -63,7 +63,7 @@ userRouter.post("/login", async (req, res) => {
             res.cookie("token", authToken, {
               httpOnly: true, // protège contre accès JS
               secure: true, // en dev = false, en prod = true avec HTTPS
-              sameSite: "lax",
+              sameSite: "none", // none si en production et lax en dev
             });
             res.status(200).json(findUser);
           } else {
