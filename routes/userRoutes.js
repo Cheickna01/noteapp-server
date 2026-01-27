@@ -134,6 +134,7 @@ userRouter.post("/forgot-password", async (req, res) => {
       res.status(409).json("Cet utilisateur n'existe pas!");
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json("Une erreur est survenue!");
   }
 });
