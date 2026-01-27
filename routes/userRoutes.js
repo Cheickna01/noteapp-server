@@ -90,7 +90,7 @@ userRouter.post("/update-account", auth, async (req, res) => {
   });
   try {
     const isSame = bcrypt.compare(password, user.password);
-    if (isSame) {
+    if (isSame === true) {
       const hashedPassword = bcrypt.hash(
         newPassword,
         10,
