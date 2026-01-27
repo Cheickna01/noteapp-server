@@ -127,7 +127,7 @@ userRouter.post("/forgot-password", async (req, res) => {
       );
       findUser.authTokens[0] = { authToken };
       findUser.save();
-      const link = `http://localhost:5173/reset-password/${authToken}`;
+      const link = `https://notesometips.netlify.app/reset-password/${authToken}`;
       sendMail(email, link);
       res.status(200).json("E-mail envoyé avec succès!");
     } else {
