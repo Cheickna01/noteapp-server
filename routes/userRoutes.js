@@ -88,7 +88,7 @@ userRouter.post("/update-account", auth, async (req, res) => {
   const user = await User.findById(req.user._id);
   if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
   try {
-    const isSame = bcrypt.compare(password, user.password);
+    const isSame = await bcrypt.compare(password, user.password);
     if (!isSame) {
       res.status(401).json(isSame);
     } else {
