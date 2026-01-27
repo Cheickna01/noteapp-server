@@ -79,7 +79,7 @@ userRouter.post("/login", async (req, res) => {
 
 userRouter.post("/logout", auth, async (req, res) => {
   res.clearCookie("token");
-  res.status(200).json("déconnecter")
+  res.status(200).json("déconnecter");
 });
 
 // Modification de compte
