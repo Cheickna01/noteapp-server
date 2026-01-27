@@ -126,9 +126,9 @@ userRouter.post("/forgot-password", async (req, res) => {
         { expiresIn: "1h" }
       );
       findUser.authTokens[0] = { authToken };
-      await findUser.save();
+      findUser.save();
       const link = `https://notesometips.netlify.app/reset-password/${authToken}`;
-      await sendMail(email, link);
+      sendMail(email, link);
       res.status(200).json("E-mail envoyé avec succès!");
     } else {
       res.status(409).json("Cet utilisateur n'existe pas!");
