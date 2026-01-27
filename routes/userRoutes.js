@@ -4,7 +4,6 @@ const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const auth = require("../middlewares/auth");
-const sendMail = require("../utils/sendMail");
 
 const userRouter = require("express").Router();
 
@@ -127,14 +126,45 @@ userRouter.post("/forgot-password", async (req, res) => {
       );
       findUser.authTokens[0] = { authToken };
       findUser.save();
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.USER,
+          pass: process.env.PASSWORD,
+        },
+      });
+      const sendEmail = async (email, link) => {
+        const mailOptions = {
+          from: `"Support" ${process.env.USER}`,
+          to: email,
+          subject: "Lien de récupération de compte",
+          html: `
+              <p>Bonjour,</p>
+              <p>Vous avez demandé à réinitialiser votre mot de passe.
+              Cliquez sur le lien ci-dessous pour créer un nouveau mot de passe :
+              </p>
+              <a href="${link}">Réinitialiser mon mot de passe</a>
+              <p>Ce lien est valable pendant 48 heures. Si vous n’êtes pas à l’origine de cette demande, ignorez simplement cet email.</p>
+              <p>Merci,</p>
+              <p>L'équipe NOTEAPP</p>
+            `,
+        };
+
+        try {
+          await transporter.sendMail(mailOptions);
+          console.log("Email de réinitialisation envoyé avec succès !");
+        } catch (error) {
+          console.log("Erreur lors de l'envoi de l'email :", error);
+        }
+      };
       const link = `https://notesometips.netlify.app/reset-password/${authToken}`;
-      sendMail(email, link);
+      sendEmail(email, link);
       res.status(200).json("E-mail envoyé avec succès!");
     } else {
       res.status(409).json("Cet utilisateur n'existe pas!");
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json("Une erreur est survenue!");
   }
 });
