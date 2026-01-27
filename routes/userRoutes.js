@@ -100,7 +100,7 @@ userRouter.post("/update-account", auth, async (req, res) => {
           } else {
             user.password = hashed;
             user.save();
-            res.status(200).json("Compte modifié avec succès!");
+            res.status(200).json(isSame,user);
           }
         }
       );
