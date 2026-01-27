@@ -100,12 +100,12 @@ userRouter.post("/update-account", auth, async (req, res) => {
           } else {
             user.password = hashed;
             user.save();
-            res.status(200).json(isSame,user);
+            res.status(200).json("Compte modifié avec succès!");
           }
         }
       );
     } else {
-      res.status(401).json("Mot de passe incorrect!");
+      res.status(401).json(isSame);
     }
   } catch (error) {
     res.status(500).json("Une erreur est survenue!");
