@@ -100,7 +100,10 @@ userRouter.post("/update-account", auth, async (req, res) => {
           } else {
             user.password = hashed;
             user.save();
-            res.status(200).json(isSame);
+            res.status(200).json({
+              success: isSame,
+              message: "Le mot de passe actuel est incorrect.",
+            });
           }
         }
       );
