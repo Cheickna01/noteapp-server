@@ -24,14 +24,7 @@ const sendMail = (email, link) => {
             `,
   };
 
-  try {
-    transporter.sendMail(mailOptions, (err, info) => {
-    return info
-  });
-  } catch (error) {
-    console.log(error,"catch")
-    return error
-  }
+ return transporter.sendMail(mailOptions);
 };
 
 module.exports = sendMail
