@@ -85,11 +85,11 @@ userRouter.post("/logout", auth, async (req, res) => {
 // Modification de compte
 userRouter.post("/update-account", auth, async (req, res) => {
   const { password, newPassword, passwordConfirm } = req.body;
-  const user = await User.findById(req.user._id)
+  const user = await User.findById(req.user._id);
   try {
     const isSame = bcrypt.compare(password, user.password);
     if (!isSame) {
-            res.status(401).json(isSame);
+      res.status(401).json(isSame);
     } else {
       const hashedPassword = bcrypt.hash(
         newPassword,
@@ -100,7 +100,7 @@ userRouter.post("/update-account", auth, async (req, res) => {
           } else {
             user.password = hashed;
             user.save();
-            res.status(200).json("Compte modifié avec succès!");
+            res.status(200).json(user);
           }
         }
       );
