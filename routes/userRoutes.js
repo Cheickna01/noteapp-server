@@ -56,7 +56,7 @@ userRouter.post("/login", async (req, res) => {
             const authToken = jwt.sign(
               { _id: findUser._id, email: email },
               process.env.SECRET_TOKEN,
-              { expiresIn: "1h" }
+              { expiresIn: "1h" },
             );
             findUser.authTokens[0] = { authToken };
             findUser.save();
@@ -69,7 +69,7 @@ userRouter.post("/login", async (req, res) => {
           } else {
             res.status(401).json("Mot de passe incorrect!");
           }
-        }
+        },
       );
     }
   } catch (error) {
@@ -106,7 +106,7 @@ userRouter.post("/update-account", auth, async (req, res) => {
               message: "Le mot de passe actuel est incorrect.",
             });
           }
-        }
+        },
       );
     }
   } catch (error) {
@@ -123,15 +123,17 @@ userRouter.post("/forgot-password", async (req, res) => {
       const authToken = jwt.sign(
         { _id: findUser._id, email: email },
         process.env.PASSWORD_SECRET_TOKEN,
-        { expiresIn: "1h" }
+        { expiresIn: "1h" },
       );
       findUser.authTokens[0] = { authToken };
       findUser.save();
       const transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        secure: false,
         auth: {
-          user: process.env.USER,
-          pass: process.env.PASSWORD,
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
         },
       });
       const sendEmail = async (email, link) => {
@@ -159,7 +161,7 @@ userRouter.post("/forgot-password", async (req, res) => {
         }
       };
       const link = `https://notesometips.netlify.app/reset-password/${authToken}`;
-      console.log(email)
+      console.log(email);
       sendEmail(email, link);
       res.status(200).json("E-mail envoyé avec succès!");
     } else {
