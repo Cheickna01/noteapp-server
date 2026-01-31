@@ -138,7 +138,7 @@ userRouter.post("/forgot-password", async (req, res) => {
       });
       const sendEmail = async (email, link) => {
         const mailOptions = {
-          from: `"Support" ${process.env.USER}`,
+          from: `"Support" ${process.env.SMTP_FROM}`,
           to: email,
           subject: "Lien de récupération de compte",
           html: `
