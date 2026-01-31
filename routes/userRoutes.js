@@ -128,8 +128,8 @@ userRouter.post("/forgot-password", async (req, res) => {
       findUser.authTokens[0] = { authToken };
       findUser.save();
       const transporter = nodemailer.createTransport({
-        host: SMTP_HOST,
-        port: SMTP_PORT,
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
         secure: false, // Doit rester false pour le port 587
         auth: {
           user: process.env.SMTP_USER,
