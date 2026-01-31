@@ -136,28 +136,64 @@ userRouter.post("/forgot-password", async (req, res) => {
           pass: process.env.SMTP_PASS,
         },
       });
+      // const sendEmail = async (email, link) => {
+      //   const mailOptions = {
+      //     from: `"Support" ${process.env.SMTP_FROM}`,
+      //     to: email,
+      //     subject: "Lien de récupération de compte",
+      //     html: `
+      //         <p>Bonjour,</p>
+      //         <p>Vous avez demandé à réinitialiser votre mot de passe.
+      //         Cliquez sur le lien ci-dessous pour créer un nouveau mot de passe :
+      //         </p>
+      //         <a href="${link}">Réinitialiser mon mot de passe</a>
+      //         <p>Ce lien est valable pendant 48 heures. Si vous n’êtes pas à l’origine de cette demande, ignorez simplement cet email.</p>
+      //         <p>Merci,</p>
+      //         <p>L'équipe NOTEAPP</p>
+      //       `,
+      //   };
+
+      //   try {
+      //     await transporter.sendMail(mailOptions);
+      //     res.status(200).json("E-mail envoyé avec succès!");
+      //   } catch (error) {
+      //     console.log("Erreur lors de l'envoi de l'email :", error);
+      //   }
+      // };
+
       const sendEmail = async (email, link) => {
-        const mailOptions = {
-          from: `"Support" ${process.env.SMTP_FROM}`,
-          to: email,
-          subject: "Lien de récupération de compte",
-          html: `
+        try {
+          const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+            method: "POST",
+            headers: {
+              accept: "application/json",
+              "api-key": process.env.BREVO_API_KEY,
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({
+              sender: {
+                name: "Support NOTEAPP",
+                email: process.env.SMTP_FROM, // Votre email validé sur Brevo
+              },
+              to: [{ email: email }],
+              subject: "Lien de récupération de compte",
+              htmlContent: `
               <p>Bonjour,</p>
-              <p>Vous avez demandé à réinitialiser votre mot de passe.
-              Cliquez sur le lien ci-dessous pour créer un nouveau mot de passe :
-              </p>
+              <p>Vous avez demandé à réinitialiser votre mot de passe.</p>
               <a href="${link}">Réinitialiser mon mot de passe</a>
-              <p>Ce lien est valable pendant 48 heures. Si vous n’êtes pas à l’origine de cette demande, ignorez simplement cet email.</p>
-              <p>Merci,</p>
               <p>L'équipe NOTEAPP</p>
             `,
-        };
+            }),
+          });
 
-        try {
-          await transporter.sendMail(mailOptions);
-          res.status(200).json("E-mail envoyé avec succès!");
+          if (response.ok) {
+            console.log("Email envoyé via API !");
+          } else {
+            const errorData = await response.json();
+            console.error("Erreur Brevo API :", errorData);
+          }
         } catch (error) {
-          console.log("Erreur lors de l'envoi de l'email :", error);
+          console.error("Erreur réseau :", error);
         }
       };
       const link = `https://noteapp-client-production.up.railway.app/reset-password/${authToken}`;
