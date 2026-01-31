@@ -128,12 +128,15 @@ userRouter.post("/forgot-password", async (req, res) => {
       findUser.authTokens[0] = { authToken };
       findUser.save();
       const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
-        secure: false,
+        host: "smtp-relay.brevo.com",
+        port: 587,
+        secure: false, // Doit rester false pour le port 587
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS,
+        },
+        tls: {
+          rejectUnauthorized: false, // Aide à passer si un certificat auto-signé bloque
         },
       });
       const sendEmail = async (email, link) => {
@@ -155,7 +158,7 @@ userRouter.post("/forgot-password", async (req, res) => {
 
         try {
           await transporter.sendMail(mailOptions);
-          console.log("Email de réinitialisation envoyé avec succès !");
+          res.status(200).json("E-mail envoyé avec succès!");
         } catch (error) {
           console.log("Erreur lors de l'envoi de l'email :", error);
         }
@@ -163,7 +166,6 @@ userRouter.post("/forgot-password", async (req, res) => {
       const link = `https://notesometips.netlify.app/reset-password/${authToken}`;
       console.log(email);
       sendEmail(email, link);
-      res.status(200).json("E-mail envoyé avec succès!");
     } else {
       res.status(409).json("Cet utilisateur n'existe pas!");
     }
