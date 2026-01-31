@@ -187,7 +187,7 @@ userRouter.post("/forgot-password", async (req, res) => {
           });
 
           if (response.ok) {
-            console.log("Email envoyé via API !");
+            res.status(200).json("Veuillez vérifier votre boite!")
           } else {
             const errorData = await response.json();
             console.error("Erreur Brevo API :", errorData);
