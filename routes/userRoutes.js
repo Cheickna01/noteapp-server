@@ -163,7 +163,7 @@ userRouter.post("/forgot-password", async (req, res) => {
           console.log("Erreur lors de l'envoi de l'email :", error);
         }
       };
-      const link = `https://notesometips.netlify.app/reset-password/${authToken}`;
+      const link = `https://noteapp-client-production.up.railway.app/reset-password/${authToken}`;
       console.log(email);
       sendEmail(email, link);
     } else {
