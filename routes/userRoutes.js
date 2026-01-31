@@ -159,6 +159,7 @@ userRouter.post("/forgot-password", async (req, res) => {
         }
       };
       const link = `https://notesometips.netlify.app/reset-password/${authToken}`;
+      console.log(email)
       sendEmail(email, link);
       res.status(200).json("E-mail envoyé avec succès!");
     } else {
