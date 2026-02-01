@@ -7,9 +7,11 @@ const auth = async (req, res, next) => {
       req.user = decode;
       next();
     } else {
+      console.log("c'est là 1")
       res.status(401).json("Vous n'etes pas autorisé");
     }
   } catch (error) {
+    console.log(error)
     res.status(401).json(error);
   }
 };
