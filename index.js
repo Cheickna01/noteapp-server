@@ -17,7 +17,7 @@ app.use(
 );
 
 app.use("/api", userRouter);
-app.use("/api", noteRouter);
+app.use("/api/notes", noteRouter);
 
 app.listen(process.env.PORT, () => {
   console.log("Serveur en écoute...");
