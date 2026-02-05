@@ -11,7 +11,7 @@ const auth = async (req, res, next) => {
       res.status(401).json("Vous n'etes pas autorisé");
     }
   } catch (error) {
-    console.log(token)
+    console.log(error)
     res.status(401).json(error);
   }
 };

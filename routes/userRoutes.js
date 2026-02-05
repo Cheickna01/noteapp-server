@@ -198,7 +198,7 @@ userRouter.post("/forgot-password", async (req, res) => {
           console.error("Erreur réseau :", error);
         }
       };
-      const link = `https://noteapp-client-production.up.railway.app/reset-password/${authToken}`;
+      const link = `https://notappl.netlify.app/reset-password/${authToken}`;
       console.log(email);
       sendEmail(email, link);
     } else {
