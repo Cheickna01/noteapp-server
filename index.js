@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://noteapp-client-production.up.railway.app"],
+    origin: ["http://localhost:5173", "https://notappl.netlify.app"],
     credentials: true,
   })
 );
