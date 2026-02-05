@@ -61,21 +61,20 @@ userRouter.post("/login", async (req, res) => {
             findUser.authTokens[0] = { authToken };
             findUser.save();
             res.cookie("token", authToken, {
-          httpOnly: true,
-          secure: false,
-          sameSite: "Lax",
-          maxAge: 24 * 60 * 60 * 1000,
-        });
-            res.status(200).json(findUser);
+              httpOnly: true,
+              secure: true,
+              sameSite: "none",
+            });
+            res.status(200).json({ user: findUser, token: authToken });
           } else {
-            console.log("mot-de passe")
+            console.log("mot-de passe");
             res.status(401).json("Mot de passe incorrect!");
           }
         },
       );
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json("Une erreur est survenue!");
   }
 });
@@ -190,7 +189,7 @@ userRouter.post("/forgot-password", async (req, res) => {
           });
 
           if (response.ok) {
-            res.status(200).json("Veuillez vérifier votre boite!")
+            res.status(200).json("Veuillez vérifier votre boite!");
           } else {
             const errorData = await response.json();
             console.error("Erreur Brevo API :", errorData);
