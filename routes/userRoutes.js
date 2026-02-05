@@ -61,9 +61,10 @@ userRouter.post("/login", async (req, res) => {
             findUser.authTokens[0] = { authToken };
             findUser.save();
             res.cookie("token", authToken, {
-              httpOnly: true, // protège contre accès JS
-              secure: true, // en dev = false, en prod = true avec HTTPS
-              sameSite: "none", // none si en production et lax en dev
+              httpOnly: true,
+              secure: false,
+              sameSite: "Lax",
+              maxAge: 24 * 60 * 60 * 1000,
             });
             res.status(200).json(findUser);
           } else {
@@ -187,7 +188,7 @@ userRouter.post("/forgot-password", async (req, res) => {
           });
 
           if (response.ok) {
-            res.status(200).json("Veuillez vérifier votre boite!")
+            res.status(200).json("Veuillez vérifier votre boite!");
           } else {
             const errorData = await response.json();
             console.error("Erreur Brevo API :", errorData);
