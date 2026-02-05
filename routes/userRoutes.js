@@ -61,10 +61,11 @@ userRouter.post("/login", async (req, res) => {
             findUser.authTokens[0] = { authToken };
             findUser.save();
             res.cookie("token", authToken, {
-              httpOnly: true, // protège contre accès JS
-              secure: false, // en dev = false, en prod = true avec HTTPS
-              sameSite: "lax", // none si en production et lax en dev
-            });
+          httpOnly: true,
+          secure: false,
+          sameSite: "Lax",
+          maxAge: 24 * 60 * 60 * 1000,
+        });
             res.status(200).json(findUser);
           } else {
             console.log("mot-de passe")
