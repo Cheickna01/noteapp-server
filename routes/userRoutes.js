@@ -67,12 +67,14 @@ userRouter.post("/login", async (req, res) => {
             });
             res.status(200).json(findUser);
           } else {
+            console.log("mot-de passe")
             res.status(401).json("Mot de passe incorrect!");
           }
         },
       );
     }
   } catch (error) {
+    console.log(error)
     res.status(500).json("Une erreur est survenue!");
   }
 });
