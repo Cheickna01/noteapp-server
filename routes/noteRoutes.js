@@ -35,7 +35,6 @@ noteRouter.post("/every", auth, async (req, res) => {
       res.status(200).json({ notes: notes, tags: tagss });
     }
   } catch (error) {
-    console.log("first")
     res.status(500).json("Une erreur est survenue!");
   }
 });
