@@ -32,7 +32,6 @@ noteRouter.post("/every", auth, async (req, res) => {
     );
     if (tags.length > 0) {
       const notes = await Note.find({
-        archived: archives,
         "tags.tag": tags,
         userId: new mongoose.Types.ObjectId(user._id),
       });

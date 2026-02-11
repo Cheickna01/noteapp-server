@@ -1,13 +1,10 @@
 const mongoose = require("mongoose");
 
 const dataBaseConnect = () => {
-  try {
-    mongoose.connect(process.env.MONGO_URI);
-    console.log("Connexion réussie à la BD");
-  } catch (error) {
-    console.log("Connexion échouée à la BD");
-    console.log(error);
-  }
+  mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => console.log("Connexion réussie à la BD"))
+    .catch((err) => console.log("Connexion échouée à la BD", err));
 };
 
 module.exports = dataBaseConnect;
