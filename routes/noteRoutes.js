@@ -21,6 +21,7 @@ noteRouter.get("/", async (req, res) => {
 // Toutes les notes avec des filtres
 noteRouter.post("/every", auth, async (req, res) => {
   const { archives, tags } = req.body;
+  const user = req.user
   try {
     const a = await Note.find();
     const filtrer = a?.flatMap((note) => note.tags.map((t) => t));
@@ -28,7 +29,7 @@ noteRouter.post("/every", auth, async (req, res) => {
       (obj, index, self) => index === self.findIndex((o) => o.tag === obj.tag)
     );
     if (tags.length > 0) {
-      const notes = await Note.find({ archived: archives, "tags.tag": tags });
+      const notes = await Note.find({ archived: archives, "tags.tag": tags, userId: new mongoose.Types.ObjectId(user._id) });
       res.status(200).json({ notes: notes, tags: tagss });
     } else {
       const notes = await Note.find({ archived: archives });
